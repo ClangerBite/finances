@@ -1,0 +1,9 @@
+[project]
+name = "finances"
+version = "0.1.0"
+description = "Analysis of personal finances"
+readme = "README.md"
+requires-python = ">=3.12"
+dependencies = [
+    "numpy>=2.3.2",
+]
