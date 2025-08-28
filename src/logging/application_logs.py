@@ -53,3 +53,5 @@ initialize_application_loggers()
 log_debug = LoggerFactory.get_logger('debug')
 log_error = LoggerFactory.get_logger('errors')
 log_output = LoggerFactory.get_logger('output')
+
+log_output.info("Logging system initialised") 
