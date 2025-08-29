@@ -1,57 +1,28 @@
 # /////////////////////////////////////////////////////////////////////////////
 # APPLICATION LOGS
 #  
-# This module defines the logger instances used in the application, set up via 
-# a LoggerFactory class.
+# This module specifies the logger instances to be used in the application.
+# 
+# The LOG_DIR and LOG_CONFIGS settings must be imported into the log_system module.
 #
-# Compulsory configurations:
-#   1. logger name
-#   2. log file path
-#
-# Optional configurations:
-#   1. log level (default is INFO)
-#   2. format of the log message (default is 'long' but console is always 'short')
-#   3. whether to output to console as well (default is disabled)
+#   1. LOG_DIR: Relative path of directory to store the log files
+#   2. LOG_CONFIGS: List of lists of logger configurations in the format
+#           [log name, 
+#           log level,
+#           message length ('short' or 'long')'
+#           output to console in addition to log file (boolean)]
 #
 # /////////////////////////////////////////////////////////////////////////////
 
 import logging
-from src.logging.log_system import LoggerFactory
 
+# Relative path of directory to store the log files
+LOG_DIR = 'logs'
 
-# /////////////////////////////////////////////////////////////////////////////
-def initialize_application_loggers():
-    """
-    Initialize application loggers with specified configurations.
-    
-    This function must be called once at the start of the application in order
-    to set up the loggers used throughout the application.
-    """
-    LoggerFactory.get_logger(
-        'debug',
-        log_file='logs/debug.log',
-        format='short',
-        level=logging.DEBUG,
-    )
-    LoggerFactory.get_logger(
-        'errors',
-        log_file='logs/errors.log',
-        level=logging.WARNING,
-        console=True,
-    )
-    LoggerFactory.get_logger(
-        'output',
-        log_file='logs/output.log',
-        level=logging.INFO,
-    )
+# Logger configurations
+LOG_CONFIGS = [
+    ['debug', logging.DEBUG, 'short', False],
+    ['errors', logging.WARNING, 'long', True],
+    ['output', logging.INFO, 'long', False],
+]
 
-# /////////////////////////////////////////////////////////////////////////////
-# Initialize loggers when module is imported
-initialize_application_loggers()
-
-# Names of logger instances to be exported for use in other modules
-log_debug = LoggerFactory.get_logger('debug')
-log_error = LoggerFactory.get_logger('errors')
-log_output = LoggerFactory.get_logger('output')
-
-log_output.info("Logging system initialised") 

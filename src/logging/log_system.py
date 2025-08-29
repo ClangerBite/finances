@@ -1,20 +1,19 @@
 # /////////////////////////////////////////////////////////////////////////////
 # LOGGING SYSTEM 
 #
-# This module provides a logging system with configurable loggers. It allows the 
-# creation of multiple loggers with different settings within a LoggerFactory class
+# This module provides a logging system with configurable loggers re-usable across 
+# multiple applications. It allows the creation of multiple loggers with different 
+# settings within a LoggerFactory class.
 #
-# This module can be re-used across multiple applications. The actual loggers created 
-# for use in an application are set up in a separate module (log_instances.py).
+# The module requires the following application-specific settings to be imported:
+#   1. LOG_DIR: Relative path of directory to store the log files
+#   2. LOG_CONFIGS: List of lists of logger configurations in the format
+#           [log name, 
+#           log level,
+#           message length ('short' or 'long')'
+#           output to console in addition to log file (boolean)]
 #
-# Compulsory configurations:
-#   1. logger name
-#   2. log file path
-#
-# Optional configurations:
-#   1. log level (default is INFO)
-#   2. format of the log message (default is 'long' but console is always 'short')
-#   3. whether to output to console as well (default is disabled)
+# Messages sent to the console are always short format.
 #
 # /////////////////////////////////////////////////////////////////////////////
 
@@ -23,6 +22,9 @@ import os
 from logging.handlers import RotatingFileHandler
 from typing import Dict, Any
 from dataclasses import dataclass
+import shutil
+import atexit
+from src.logging.application_logs import LOG_DIR, LOG_CONFIGS
 
 
 # /////////////////////////////////////////////////////////////////////////////
@@ -49,15 +51,17 @@ class LogConfig:
 def setup_logger(
     logger_name: str,
     log_file: str,
-    level: int = logging.INFO,
-    format: str = 'long',
-    console: bool = False
+    level: int,
+    format: str,
+    console: bool,
 ) -> logging.Logger:
     """Set up a logger with improved error handling"""
     
     try:
         ensure_log_directory_exists(log_file)
-        logger = get_logger(logger_name)
+        logger = logging.getLogger(logger_name)
+        # Clear ALL existing handlers
+        logger.handlers.clear()
         logger.setLevel(level)
         
         # Add rotating file handler
@@ -82,26 +86,16 @@ def ensure_log_directory_exists(log_path: str) -> None:
     except Exception as e:
         raise RuntimeError(f"Failed to create log directory: {e}")
     
-      
-# /////////////////////////////////////////////////////////////////////////////
-def get_logger(logger_name):
-  """Get a logger by name."""
-  
-  logger = logging.getLogger(logger_name)
-  if logger.hasHandlers():
-    logger.handlers.clear()
-  
-  return logger
 
 
 # /////////////////////////////////////////////////////////////////////////////
-def create_rotating_handler(log_file: str, format: str = 'long') -> RotatingFileHandler:
+def create_rotating_handler(log_file: str, format: str) -> RotatingFileHandler:
     """Create a rotating file handler with size limits"""
     handler = RotatingFileHandler(
         log_file,
         maxBytes=LogConfig.MAX_BYTES,
         backupCount=LogConfig.BACKUP_COUNT,
-        mode='a'
+        mode='w'
     )
     return formatted_handler(handler, format)
 
@@ -141,13 +135,94 @@ def log_format(format):
 
 # ////////////////////////////////////////////////////////////////////////////
 class LoggerFactory:
-    """Factory class for creating loggers"""
+    """Factory class for creating and managing loggers"""
     _loggers: Dict[str, logging.Logger] = {}
     
     @classmethod
-    def get_logger(cls, name: str, **kwargs: Any) -> logging.Logger:
-        """Get or create a logger with specified configuration"""
+    def create_logger(cls, name: str, **kwargs: Any) -> logging.Logger:
+        """Create a new logger with specified configuration
+        
+        Args:
+            name: Name of the logger
+            **kwargs: Configuration options including:
+                log_file: Path to log file
+                level: Logging level (default: INFO)
+                format: Log format type (default: 'long')
+                console: Enable console output (default: False)
+        """
+        logger = setup_logger(name, **kwargs)
+        cls._loggers[name] = logger
+        return logger
+
+    @classmethod
+    def get_logger(cls, name: str) -> logging.Logger:
+        """Retrieve an existing logger
+        
+        Args:
+            name: Name of the logger to retrieve
+        Raises:
+            KeyError: If logger doesn't exist
+        """
         if name not in cls._loggers:
-            cls._loggers[name] = setup_logger(name, **kwargs)
+            raise KeyError(f"Logger '{name}' not found. Create it first using create_logger()")
         return cls._loggers[name]
 
+
+# ////////////////////////////////////////////////////////////////////////////
+class ApplicationLogger:
+    """Manages application logging lifecycle"""
+    _initialized = False
+    _loggers = {}
+    
+    # LOG CONFIGURATION SETTINGS
+    _log_dir = LOG_DIR
+    _log_configs = LOG_CONFIGS
+    
+    @classmethod
+    def initialize(cls):
+        """Initialize all application loggers"""
+        if cls._initialized:
+            return
+         
+        cls.wipe_old_logs()
+        
+        for log in cls._log_configs:
+            cls._loggers[log[0]] = LoggerFactory.create_logger(
+                name=log[0],
+                level=log[1],
+                format=log[2],
+                console=log[3],
+                log_file=f'{cls._log_dir}/{log[0]}.log',
+            )
+
+        cls._initialized = True
+        atexit.register(cls.cleanup)
+
+    @classmethod
+    def wipe_old_logs(cls):
+        """Shutdown existing logging system and remove & remake log directory"""
+        logging.shutdown()
+        logging.getLogger().handlers.clear()
+
+        if os.path.exists(cls._log_dir):
+            shutil.rmtree(cls._log_dir)
+        os.makedirs(cls._log_dir, exist_ok=True)
+
+    @classmethod
+    def cleanup(cls):
+        """Cleanup logging system"""
+        logging.shutdown()
+        cls._initialized = False
+
+    @classmethod
+    def get_logger(cls, name: str) -> logging.Logger:
+        """Get a logger by name"""
+        if not cls._initialized:
+            cls.initialize()
+        return cls._loggers[name]
+
+
+# ////////////////////////////////////////////////////////////////////////////
+def get_loggers():
+    """Get all application loggers"""
+    return tuple(ApplicationLogger.get_logger(log[0]) for log in LOG_CONFIGS)

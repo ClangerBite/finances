@@ -3,7 +3,10 @@
 # /////////////////////////////////////////////////////////////////////////////
 
 from typing import Optional
-from src.logging.application_logs import log_error
+from src.logging.log_system import get_loggers
+
+# Get logger instances at module level
+log_debug, log_error, log_output = get_loggers()
 
 
 # /////////////////////////////////////////////////////////////////////////////

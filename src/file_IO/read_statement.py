@@ -1,7 +1,9 @@
 from src.error_handling import exceptions
-from src.logging.application_logs import log_error, log_output
+from src.logging.log_system import get_loggers
 from typing import List, Dict
 
+# Get logger instances at module level
+log_debug, log_error, log_output = get_loggers()
   
 # /////////////////////////////////////////////////////////////////////////////    
    
@@ -48,6 +50,9 @@ def parse_statement(data: List[List[str]]) -> List[Dict]:
                     open_accruals[account].append(accrual)    
 
             case 'Net Asset Value':
+                pass  # Future implementation
+            
+            case 'Account Summary':
                 pass  # Future implementation
             
             case 'Change in NAV':
