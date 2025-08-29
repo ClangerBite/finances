@@ -4,7 +4,7 @@
 # /////////////////////////////////////////////////////////////////////////////
 
 
-from src.core.app import run_application
+from src.app import run_application
 
 
 def main() -> None:

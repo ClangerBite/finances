@@ -21,7 +21,7 @@ LOG_DIR = 'logs'
 
 # Logger configurations
 LOG_CONFIGS = [
-    ['debug', logging.DEBUG, 'short', False],
+    ['system', logging.INFO, 'short', True],
     ['errors', logging.WARNING, 'long', True],
     ['output', logging.INFO, 'long', False],
 ]

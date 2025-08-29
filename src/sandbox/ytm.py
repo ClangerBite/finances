@@ -1,7 +1,11 @@
 from datetime import date
 from typing import List, Tuple
 import numpy as np
-from src.logging.application_logs import log_error, log_debug
+from src.monitoring.log_system import get_loggers
+
+# Get logger instances at module level
+log_system, log_error, log_output = get_loggers()
+
 
 def calculate_ytm(
     purchase_price: float,

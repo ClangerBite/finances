@@ -24,7 +24,7 @@ from typing import Dict, Any
 from dataclasses import dataclass
 import shutil
 import atexit
-from src.logging.application_logs import LOG_DIR, LOG_CONFIGS
+from config.config_logs import LOG_DIR, LOG_CONFIGS
 
 
 # /////////////////////////////////////////////////////////////////////////////

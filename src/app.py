@@ -1,9 +1,9 @@
-from src.file_IO.filepath_utilities import get_filepaths, get_filepath
-from src.file_IO.filepath_utilities import get_abs_path
+from src.file_IO.filepaths import get_filepaths, get_filepath
+from src.file_IO.filepaths import get_abs_path
 from src.file_IO.read_files import read_yaml, read_csv_headerless_UTF8
-from src.logging.log_system import get_loggers
-from src.core.bond_return import test_bond_yield_calcs
-from src.file_IO.read_statement import parse_statement
+from src.monitoring.log_system import get_loggers
+from src.core.yields.bond_return import test_bond_yield_calcs
+from src.core.statements.read_statement import parse_statement
 
 
 CONFIG_RELATIVE_PATH = 'config/config_sensitive.yaml'
@@ -13,10 +13,8 @@ COMPONENT_FLAG = 3
   
 def run_application():
     """Main application entry point"""
-    # global log_debug, log_error, log_output
-    log_debug, log_error, log_output = get_loggers()
-    
-    log_output.info("Logging system initialized")
+    log_system, log_error, log_output = get_loggers()    
+    log_system.info("Logging system initialised")
     
     # Load configuration file
     sensitive = read_yaml(get_abs_path(CONFIG_RELATIVE_PATH))
@@ -35,7 +33,7 @@ def run_application():
     # Component - Read statements
     if COMPONENT_FLAG == 3:
         filepath = get_filepath (sensitive['statement_dir'], sensitive['statement_file'])
-        log_output.info(f"Reading statement file: {filepath}")
+        log_system.info(f"Reading statement file: {filepath}")
         
         data = read_csv_headerless_UTF8(filepath)
         parse_statement(data)
