@@ -1,12 +1,16 @@
-from src.monitoring import exceptions
-from src.monitoring.log_system import get_loggers
 from typing import List, Dict
-from src.core.statements.data_structures import OpenPosition, OpenAccrual
+from core.statements.data_structures import OpenPosition, OpenAccrual
+from monitor.log_system import get_loggers
 
 # Get logger instances at module level
 log_system, log_error, log_output = get_loggers()
   
 # /////////////////////////////////////////////////////////////////////////////    
+
+
+# CHANGE THIS - THE FILES COME IN SEPARATELY SO NOT A DICT BUT A LIST AND NEED TO FETCH ALL FILES IN THE DIRECTORY THEN PROCESS EACH FILE INDIVIDUALLY
+# POSSIBLY ADD THEM AS SETS TO A DICT OF ACCOUNTS THAT I CREATE
+# PRINT OUTPUTS TO LOG PROPERLY, NOT JUST OUTPUT ALL ROWS
    
 
 def parse_statement(data: List[List[str]]) -> List[Dict]:
@@ -46,9 +50,6 @@ def parse_statement(data: List[List[str]]) -> List[Dict]:
             case 'Net Asset Value':
                 pass  # Future implementation
             
-            case 'Account Summary':
-                pass  # Future implementation
-            
             case 'Change in NAV':
                 pass  # Future implementation
 
@@ -69,6 +70,7 @@ def parse_statement(data: List[List[str]]) -> List[Dict]:
         
 
         log_output.info(f"Parsed row: {row}")
+        # put this in a separate show_result(data) or showData() function
         
     return date, open_pos, open_accruals
 

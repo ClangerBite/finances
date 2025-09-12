@@ -1,6 +1,6 @@
 import os
 from contextlib import contextmanager
-from src.monitoring import exceptions
+from monitor import exceptions
 
 
 # /////////////////////////////////////////////////////////////////////////////

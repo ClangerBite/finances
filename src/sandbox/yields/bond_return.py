@@ -1,5 +1,5 @@
 from datetime import date
-from src.monitoring.log_system import get_loggers
+from monitor.log_system import get_loggers
 
 # Get logger instances at module level
 log_system, log_error, log_output = get_loggers()

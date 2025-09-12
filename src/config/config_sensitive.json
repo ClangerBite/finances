@@ -1,0 +1,5 @@
+{
+    "transaction_dir": "/mnt/d/OneDrive/01. Finances/01. Trading history/01. Fact Tables/01. Transactions",
+    "statement_dir": "/mnt/d/OneDrive/01. Finances/01. Trading history/05. Statements",
+    "statement_file": "Open_Positions_All_Accounts.csv"
+}

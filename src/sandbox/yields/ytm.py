@@ -1,7 +1,7 @@
 from datetime import date
 from typing import List, Tuple
 import numpy as np
-from src.monitoring.log_system import get_loggers
+from src.monitor.log_system import get_loggers
 
 # Get logger instances at module level
 log_system, log_error, log_output = get_loggers()
@@ -31,7 +31,7 @@ def calculate_ytm(
     Returns:
         float: Yield to maturity as a decimal (e.g., 0.05 for 5%)
     """
-    log_debug.debug(f"Calculating YTM for bond purchased at {purchase_price}")
+    log_system.debug(f"Calculating YTM for bond purchased at {purchase_price}")
     
     
     
@@ -99,7 +99,7 @@ def calculate_ytm(
             difference = pv - purchase_price
             
             if abs(difference) < tolerance:
-                log_debug.info(f"YTM calculation converged at {rate:.4%}")
+                log_system.info(f"YTM calculation converged at {rate:.4%}")
                 return rate
                 
             derivative = pv_derivative(rate)
@@ -109,7 +109,7 @@ def calculate_ytm(
             log_error.error("YTM calculation failed - division by zero")
             return None
             
-    log_debug.warning("YTM calculation did not converge")
+    log_error.warning("YTM calculation did not converge")
     return None
 
 # Example usage:
