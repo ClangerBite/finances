@@ -30,9 +30,15 @@ def directory_exists(dir):
         
         
 # ///////////////////////////////////////////////////////////////////////////// 
-def flatten_list(list_of_lists):
-    """Flatten a list of lists into a single list"""
-    return sum(list_of_lists, [])
+def flatten_list(mixed_list):
+    """Recursively flatten any sublists into a single list"""
+    flat_list = []
+    for item in mixed_list:
+        if isinstance(item, list):
+            flat_list.extend(flatten_list(item))
+        else:
+            flat_list.append(item)
+    return flat_list
 
 
 # /////////////////////////////////////////////////////////////////////////////  
