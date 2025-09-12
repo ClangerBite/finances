@@ -1,4 +1,4 @@
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from decimal import Decimal
 
 from typing import List
@@ -6,13 +6,36 @@ from typing import List
 
 @dataclass
 class Statement:
-    """Represents the data in aan IBKR financial statement"""
+    """Represents the data in an IBKR financial statement"""
     date: str
     account: str
     open_positions: List
     open_accruals: List
+    net_asset_values: str
+    
 
-
+@dataclass
+class NetAssetValue:
+    """Represents the components of Net Asset Value at a given date"""
+    NAV_cash: Decimal
+    NAV_stock: Decimal
+    NAV_options: Decimal
+    NAV_bonds: Decimal
+    NAV_interest_accruals: Decimal
+    NAV_dividend_accruals : Decimal
+    total: Decimal = field(init=False)
+    
+    def __post_init__(self):
+        """Convert numeric strings to Decimal objects after initialization"""
+        self.NAV_cash = Decimal(str(self.NAV_cash))
+        self.NAV_stock = Decimal(str(self.NAV_stock))
+        self.NAV_options = Decimal(str(self.NAV_options))
+        self.NAV_bonds = Decimal(str(self.NAV_bonds))
+        self.NAV_interest_accruals = Decimal(str(self.NAV_interest_accruals))
+        self.NAV_dividend_accruals = Decimal(str(self.NAV_dividend_accruals))
+        self.total = self.NAV_cash + self.NAV_stock + self.NAV_options + self.NAV_bonds + self.NAV_interest_accruals + self.NAV_dividend_accruals
+        
+        
 @dataclass
 class OpenPosition:
     """Represents an open position in a financial instrument"""
