@@ -1,6 +1,6 @@
 from dataclasses import dataclass, field
+from datetime import datetime
 from decimal import Decimal
-
 from typing import List
 
 
@@ -62,8 +62,8 @@ class OpenAccrual:
     net_amount: Decimal
     withholding_tax: Decimal
     amount_per_share: Decimal
-    ex_date: str # Convert to date type
-    pay_date: str
+    ex_date: datetime
+    pay_date: datetime
     currency: str
     unique_ID: str = None
 

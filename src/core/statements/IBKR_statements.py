@@ -4,7 +4,7 @@ from core.statements.data_structures import OpenPosition, OpenAccrual, Statement
 from file_IO.read_files import read_csv_headerless_UTF8
 from file_IO.filepaths import get_filepaths
 from monitor.log_system import get_loggers
-from core.statements.output import output_open_positions_to_browser
+from core.statements.output import display_open_positions_page,display_open_accruals_page
 
 # Get logger instances at module level
 log_system, log_error, log_output = get_loggers()
@@ -24,7 +24,8 @@ def read_statements(statements_directory):
     output_open_positions(statements)
     output_open_accruals(statements)
     output_net_asset_values(statements)
-    output_open_positions_to_browser({stmt.account: stmt.open_positions for stmt in statements})
+    display_open_positions_page({stmt.account: stmt.open_positions for stmt in statements})
+    display_open_accruals_page({stmt.account: stmt.open_accruals for stmt in statements})
     
     
 def read_statement(filepath):
@@ -130,8 +131,8 @@ def get_dividend_accruals(data):
                 net_amount=row[12],
                 withholding_tax=row[8],
                 amount_per_share=row[10],
-                ex_date=row[5],
-                pay_date=row[6],
+                ex_date=datetime.strptime(row[5], '%Y-%m-%d'),
+                pay_date=datetime.strptime(row[6], '%Y-%m-%d'),
                 currency=row[3],         
             )
             open_accruals.append(accrual)
