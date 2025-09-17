@@ -1,5 +1,4 @@
 from flask import Flask, render_template_string
-import webbrowser
 import subprocess
 from threading import Timer
 from typing import List
