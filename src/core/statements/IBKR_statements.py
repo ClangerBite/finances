@@ -4,7 +4,7 @@ from core.statements.data_structures import OpenPosition, OpenAccrual, Statement
 from file_IO.read_files import read_csv_headerless_UTF8
 from file_IO.filepaths import get_filepaths
 from monitor.log_system import get_loggers
-from core.statements.output import display_open_positions_page,display_open_accruals_page
+from core.statements.output import display_portfolio_pages
 
 # Get logger instances at module level
 log_system, log_error, log_output = get_loggers()
@@ -24,8 +24,12 @@ def read_statements(statements_directory):
     output_open_positions(statements)
     output_open_accruals(statements)
     output_net_asset_values(statements)
-    display_open_positions_page({stmt.account: stmt.open_positions for stmt in statements})
-    display_open_accruals_page({stmt.account: stmt.open_accruals for stmt in statements})
+                                 
+    display_portfolio_pages(
+        {stmt.account: stmt.open_positions for stmt in statements},
+        {stmt.account: stmt.open_accruals for stmt in statements}
+    )
+    
     
     
 def read_statement(filepath):

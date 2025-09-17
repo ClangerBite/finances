@@ -8,14 +8,45 @@ from core.statements.open_browser import open_browser
 # Get logger instances at module level
 log_system, log_error, log_output = get_loggers()
 
+class PortfolioDisplay:
+    def __init__(self, open_positions: Dict[str, List[OpenPosition]], open_accruals: Dict[str, List[OpenAccrual]]):
+        self.app = Flask(__name__)
+        self.open_positions = open_positions
+        self.open_accruals = open_accruals
+
+        # Register routes
+        self.app.add_url_rule('/', 'positions', self.show_open_positions)
+        self.app.add_url_rule('/accruals', 'accruals', self.show_open_accruals)
+        
+    def show_open_positions(self):
+        return render_template_string(
+            positions_template,
+            open_positions=self.open_positions,
+            abs=abs
+        )
+        
+    def show_open_accruals(self):
+        return render_template_string(
+            accruals_template,
+            open_accruals=self.open_accruals,
+            abs=abs
+        )
+        
+    def run(self):
+        Timer(1, open_browser).start()
+        self.app.run(debug=False)
+
+def display_portfolio_pages(open_positions, open_accruals):
+    """Display both positions and accruals pages with navigation"""
+    display = PortfolioDisplay(open_positions, open_accruals)
+    display.run()
 
 
-def display_open_positions_page(open_pos: Dict[str, List[OpenPosition]]) -> None:
-    """Output open positions for each account to HTML table"""
-    
-    app = Flask(__name__)
-    
-    html_template = """
+
+# /////////////////////////////////////////////////////////////////////////////    
+# HTML TEMPLATES FOR RENDERING PAGES
+
+positions_template = """
     <html>
         <head>
             <title>Portfolio Positions</title>
@@ -65,9 +96,22 @@ def display_open_positions_page(open_pos: Dict[str, List[OpenPosition]]) -> None
                     padding: 10px;
                     border-top: 2px solid #dee2e6;
                 }
+                .nav-button {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    background-color: #3498db;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    margin-bottom: 20px;
+                }
+                .nav-button:hover {
+                    background-color: #2980b9;
+                }
             </style>
         </head>
         <body>
+            <a href="/accruals" class="nav-button">View Dividend Accruals</a>
             <h1>Open Positions</h1>
             <table>
                 <tr>
@@ -77,7 +121,7 @@ def display_open_positions_page(open_pos: Dict[str, List[OpenPosition]]) -> None
                     <th style="text-align: right">Value</th>
                     <th>Currency</th>
                 </tr>
-                {% for account, positions in open_pos.items() %}
+                {% for account, positions in open_positions.items() %}
                     <tr>
                         <td colspan="5" class="account-header">{{account}}</td>
                     </tr>
@@ -113,34 +157,10 @@ def display_open_positions_page(open_pos: Dict[str, List[OpenPosition]]) -> None
         </body>
     </html>
     """
-    
-    # Create template context with abs function
-    template_context = {
-        'open_pos': open_pos,
-        'abs': abs  # Make abs() available to template
-    }
-    
-    @app.route('/')
-    def show_positions():
-        return render_template_string(
-            html_template,  # First argument is the template string
-            open_pos=open_pos,  # Then pass context variables as kwargs
-            abs=abs  # Make abs() available to template
-        )
-    
-    # Open browser after a short delay to ensure server is running
-    Timer(1, open_browser).start()
-    
-    # Run the Flask app
-    app.run(debug=False)
-    
-        
 
-def display_open_accruals_page(open_acc: Dict[str, List[OpenAccrual]]) -> None:
-    """Output open accruals to browser with HTML formatting"""
-    app = Flask(__name__)
-    
-    html_template = """
+
+# Add navigation to accruals template:
+accruals_template = """
     <html>
         <head>
             <title>Dividend Accruals</title>
@@ -190,9 +210,22 @@ def display_open_accruals_page(open_acc: Dict[str, List[OpenAccrual]]) -> None:
                     padding: 10px;
                     border-top: 2px solid #dee2e6;
                 }
+                .nav-button {
+                    display: inline-block;
+                    padding: 10px 20px;
+                    background-color: #3498db;
+                    color: white;
+                    text-decoration: none;
+                    border-radius: 5px;
+                    margin-bottom: 20px;
+                }
+                .nav-button:hover {
+                    background-color: #2980b9;
+                }
             </style>
         </head>
         <body>
+            <a href="/" class="nav-button">View Positions</a>
             <table>
                 <tr>
                     <th>Ticker</th>
@@ -205,7 +238,7 @@ def display_open_accruals_page(open_acc: Dict[str, List[OpenAccrual]]) -> None:
                     <th>Ex-Date</th>
                     <th>Pay Date</th>
                 </tr>
-                {% for account, accruals in open_acc.items() %}
+                {% for account, accruals in open_accruals.items() %}
                     <tr>
                         <td colspan="9" class="account-header">{{account}}</td>
                     </tr>
@@ -253,23 +286,3 @@ def display_open_accruals_page(open_acc: Dict[str, List[OpenAccrual]]) -> None:
         </body>
     </html>
     """
-    
-      # Create template context with abs function
-    template_context = {
-        'open_acc': open_acc,
-        'abs': abs  # Make abs() available to template
-    }
-    
-    @app.route('/')
-    def show_positions():
-        return render_template_string(
-            html_template,  # First argument is the template string
-            open_acc=open_acc,  # Then pass context variables as kwargs
-            abs=abs  # Make abs() available to template
-        )
-        
-      # Open browser after a short delay to ensure server is running
-    Timer(1, open_browser).start()
-    
-    app.run(debug=False)
-
