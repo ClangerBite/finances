@@ -3,7 +3,7 @@ from file_IO.filepaths import get_abs_path
 from file_IO.read_files import read_yaml, read_csv_headerless_UTF8
 from monitor.log_system import get_loggers
 from sandbox.yields.bond_return import test_bond_yield_calcs
-from core.statements.parse_statements import read_statements
+from core.statements.IBKR_statements import read_statements
 
 
 CONFIG_RELATIVE_PATH = 'src/config/config_sensitive.yaml'
