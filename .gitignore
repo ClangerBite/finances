@@ -18,5 +18,4 @@ wheels/
 logs/*
 !logs/.gitkeep
 
-src/config/config_sensitive.json
-src/config/config_sensitive.yaml
+src/config/config_private.yaml

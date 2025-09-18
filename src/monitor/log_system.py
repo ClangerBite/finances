@@ -207,6 +207,7 @@ class ApplicationLogger:
         if os.path.exists(cls._log_dir):
             shutil.rmtree(cls._log_dir)
         os.makedirs(cls._log_dir, exist_ok=True)
+        open(os.path.join(cls._log_dir, '.gitkeep'), 'w').close()  # Create empty .gitkeep file
 
     @classmethod
     def cleanup(cls):

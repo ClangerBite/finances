@@ -10,7 +10,7 @@ from front_end.output import display_portfolio_pages
 log_system, log_error, log_output = get_loggers()
 
 
-CONFIG_RELATIVE_PATH = 'src/config/config_sensitive.yaml'
+CONFIG_RELATIVE_PATH = 'src/config/config_private.yaml'
 
 COMPONENT_FLAG = 3
 
