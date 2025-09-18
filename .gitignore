@@ -17,5 +17,7 @@ wheels/
 # Sensitive data
 logs/*
 !logs/.gitkeep
+*/logs/*
+!*/logs/.gitkeep
 
 src/config/config_private.yaml

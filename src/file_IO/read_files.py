@@ -15,7 +15,7 @@
 import csv
 import yaml
 from typing import List, Dict
-from monitor import exceptions
+from src.monitor import exceptions
 
   
 # ///////////////////////////////////////////////////////////////////////////// 

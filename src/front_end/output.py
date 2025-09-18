@@ -1,9 +1,9 @@
 from flask import Flask, render_template_string
 from threading import Timer
 from typing import List, Dict
-from monitor.log_system import get_loggers
-from engine.data_structures import OpenPosition, OpenAccrual
-from front_end.open_browser import open_browser
+from src.monitor.log_system import get_loggers
+from src.engine.data_structures import OpenPosition, OpenAccrual
+from src.front_end.open_browser import open_browser
 
 # Get logger instances at module level
 log_system, log_error, log_output = get_loggers()

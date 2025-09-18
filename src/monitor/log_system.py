@@ -24,7 +24,7 @@ import atexit
 from logging.handlers import RotatingFileHandler
 from typing import Dict, Any
 from dataclasses import dataclass
-from config.config_logs import LOG_DIR, LOG_CONFIGS
+from src.config.config_logs import LOG_DIR, LOG_CONFIGS
 
 
 # /////////////////////////////////////////////////////////////////////////////
