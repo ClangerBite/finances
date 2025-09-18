@@ -2,8 +2,8 @@ from flask import Flask, render_template_string
 from threading import Timer
 from typing import List, Dict
 from monitor.log_system import get_loggers
-from core.statements.data_structures import OpenPosition, OpenAccrual
-from core.statements.open_browser import open_browser
+from engine.data_structures import OpenPosition, OpenAccrual
+from front_end.open_browser import open_browser
 
 # Get logger instances at module level
 log_system, log_error, log_output = get_loggers()
@@ -225,7 +225,7 @@ accruals_template = """
             </style>
         </head>
         <body>
-            <a href="/" class="nav-button">View Positions</a>
+            <a href="/" class="nav-button">View Open Positions</a>
             <table>
                 <tr>
                     <th>Ticker</th>
@@ -253,7 +253,7 @@ accruals_template = """
                             {%- endif -%}
                         </td>
                         <td class="value-cell">
-                            {{"{:,.4f}".format(acc.amount_per_share)}}&nbsp;
+                            {{"{:,.6f}".format(acc.amount_per_share)}}&nbsp;
                         </td>
                         <td class="value-cell">
                             {%- if acc.gross_amount < 0 -%}

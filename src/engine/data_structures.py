@@ -7,7 +7,7 @@ from typing import List
 @dataclass
 class Statement:
     """Represents the data in an IBKR financial statement"""
-    date: str
+    date: datetime
     account: str
     open_positions: List
     open_accruals: List

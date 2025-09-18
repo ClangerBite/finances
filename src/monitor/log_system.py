@@ -19,11 +19,11 @@
 
 import logging
 import os
+import shutil
+import atexit
 from logging.handlers import RotatingFileHandler
 from typing import Dict, Any
 from dataclasses import dataclass
-import shutil
-import atexit
 from config.config_logs import LOG_DIR, LOG_CONFIGS
 
 
